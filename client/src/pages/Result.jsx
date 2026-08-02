@@ -39,7 +39,11 @@ const Result = () => {
       onSubmit= {onSubmitHandler} className='flex flex-col min-h-[90vh] justify-center items-center'>
        <div>
           <div className='relative'>
-            <img src={`data:image/png;base64,${image}`}
+            <img src={
+                      image === assets.sample_img_1 
+                      ? image 
+                      :
+                      `data:image/png;base64,${image}`}
             alt="Generated" className='max-w-sm rounded'/>
             <span className={`absolute bottom-0 left-0 h-1 bg-blue-500 
              ${loading ? 'w-full transition-all duration-[10s]' : 'w-0'}`}/>
@@ -68,8 +72,13 @@ const Result = () => {
         <p onClick={() => {setIsImageLoaded(false)}}
         className='bg-transparent border border-zinc-900 text-black 
         px-8 py-3 rounded-full cursor-pointer'>Generate Another</p>
-        <a href={image} download className='bg-zinc-900 px-10 py-3 
-        rounded-full cursor-pointer'>Download</a>
+        <a
+         href={`data:image/png;base64,${image}`}
+         download="generated-image.png"
+         className="bg-zinc-900 px-10 py-3 rounded-full cursor-pointer"
+        >
+        Download
+      </a>
       </div>}
 
     </motion.form>
