@@ -1,14 +1,63 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { assets } from '../assets/assets'
-import { AppContext } from '../context/AppContext'
+import { AppContext} from '../context/AppContext'
 import {motion} from 'framer-motion'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const Login = () => {
+    const { backendUrl } = useContext(AppContext); 
+    const { setToken } = useContext(AppContext); 
+    const { setUser } = useContext(AppContext);
+    const {setShowLogin} = useContext(AppContext)
 
     const [state, setState] = useState('Login')
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    const {setShowLogin} = useContext(AppContext)
     
+    const onSubmitHandler = async (e) => {
+        e.preventDefault();
+
+        try{
+
+            if(state === 'Login'){
+                const {data} =await axios.post(backendUrl + '/api/user/login', 
+                    {email, password})
+
+                if(data.success){
+                    setToken(data.token)
+                    setUser(data.user)
+                    localStorage.setItem('token', data.token)
+                    setShowLogin(false)
+
+                } else{
+                    toast.error(data.message)
+                }
+            }
+
+            else{
+                const {data} =await axios.post(backendUrl + '/api/user/register', 
+                    {name,email, password})
+
+                if(data.success){
+                    setToken(data.token)
+                    setUser(data.user)
+                    localStorage.setItem('token', data.token)
+                    setShowLogin(false)
+
+                } else{
+                    toast.error(data.message)
+                }
+            }
+    }
+
+        catch(error){
+            toast.error(error.response.data.message)
+        }
+    }
+
     useEffect (() => {
         document.body.style.overflow = 'hidden';
 
@@ -21,34 +70,37 @@ const Login = () => {
     <div className=' fixed  top-0 left-0 right-0 bottom-0 z-10 
     backdrop-blur-sm bg-black/30 flex justify-center items-center'>
     
-    <motion.form 
+    <motion.form onSubmit = {onSubmitHandler}
      initial={{opacity: 0.2, y:50}}
      transition={{duration:0.3}}
      whileInView={{opacity:1, y:0}}
      viewport={{once:true}}
 
-    className='relative bg-white p-10 rounded-xl text-slate-500'>
+    className='relative z-20 bg-white p-10 rounded-xl text-slate-500'>
         <h1 className='text-center text-2xl text-neutral-700 
         font-medium'>{state}</h1>
         <p className='text-sm'>Welcome back! Please sign in to continue</p>
 
         {state !== 'Login' && <div className='border px-6 py-2 flex items-center gap-2 rounded-full mt-5'>
             <img  src={assets.profile_icon} alt="" width={25} />
-            <input type='text'  className='outline-none text-sm' 
+            <input onChange = {e => setName(e.target.value)}  value = {name}
+            type='text'  className='outline-none text-sm' 
             placeholder='Full Name' required/>
 
         </div>}
 
         <div className='border px-6 py-2 flex items-center gap-2 rounded-full mt-4'>
             <img  src={assets.email_icon} alt="" width={18} />
-            <input type='email'  className='outline-none text-sm px-2' 
+            <input onChange = {e => setEmail(e.target.value)}  value = {email} 
+            type='email'  className='outline-none text-sm px-2' 
             placeholder='Email id' required/>
 
         </div>
 
         <div className='border px-6 py-2 flex items-center gap-2 rounded-full mt-4'>
             <img  src={assets.lock_icon} alt=""  width={13}/>
-            <input type='password'  className='outline-none text-sm px-2' 
+            <input onChange = {e => setPassword(e.target.value)}  value = {password} 
+            type='password'  className='outline-none text-sm px-2' 
             placeholder='Password' required/>
 
         </div>
@@ -60,7 +112,10 @@ const Login = () => {
 
         { state === 'Login' ? <p className='mt-5 text-center'>Dont't have an account? 
         <span className='text-blue-600 cursor-pointer' 
-        onClick={() => setState('Sign Up')}>
+        onClick={() => {
+            console.log('clicked');
+            setState('Sign Up')
+            }}>
         Sign up</span>
         </p>
         :
