@@ -28,12 +28,13 @@ export const generateImage = async (req, res) => {
         }
 
         // Check user credits
-        if (user.creditBalance <= 0) {
-            return res.status(400).json({
-                success: false,
-                message: "No credits remaining"
-            });
-        }
+       if (user.creditBalance <= 0) {
+        return res.json({
+        success: false,
+        message: "No credits remaining",
+        creditBalance: 0
+        });
+        }   
 
         // Generate image using Cloudflare Workers AI
         const response = await axios.post(
