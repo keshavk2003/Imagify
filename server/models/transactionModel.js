@@ -21,7 +21,7 @@ const transactionSchema = new mongoose.Schema({
     required:true   
    },
 
-   payments: {
+   payment: {
     type:Boolean,
     default:false
    },
