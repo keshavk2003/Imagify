@@ -31,8 +31,7 @@ const AppContextProvider = (props)=>{
 
     }
 
-    console.log(token);
-    console.log(token.length);
+   
     
     const generateImage = async (prompt) => {
         try{
